@@ -749,9 +749,11 @@ module Commands
 
       apply_jobflow_option(:ainfo, "AdditionalInfo")
       apply_jobflow_option(:key_pair, "Instances", "Ec2KeyName")
-      apply_jobflow_option(:hadoop_version, "Instances", "HadoopVersion")
+      #apply_jobflow_option(:hadoop_version, "Instances", "HadoopVersion")
       apply_jobflow_option(:az, "Instances", "Placement", "AvailabilityZone")
       apply_jobflow_option(:log_uri, "LogUri")
+
+      apply_jobflow_option_for_ami
 
       self.step_commands = reorder_steps(@jobflow, self.step_commands)
       @jobflow["Steps"] = step_commands.map { |x| x.steps }.flatten
@@ -775,6 +777,13 @@ module Commands
       else
         logger.puts "Created job flow " + jobflow_id
       end
+    end
+
+    # added by Change.org to hardcode newer versions of the Ami and Hadoop
+    def apply_jobflow_option_for_ami
+      @jobflow['AmiVersion'] = 'latest'
+      #@jobflow['AmiVersion'] = '2.3.3'
+      #@jobflow['Instances']['HadoopVersion'] = '1.0.1'
     end
 
     def apply_jobflow_option(field_symbol, *keys)
